@@ -1,0 +1,93 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{natbib}
+
+\usepackage{geometry}
+\geometry{
+  left=1in,
+  right=1in,
+  top=1in,
+  bottom=1in
+}
+
+\title{Thesis Proposal}
+\author{Leo Gordon}
+\date{October 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Proposed Title}
+
+The proposed title of my thesis is: \textsc{Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics}.
+
+\section{LLM Intro (short) \& Introduction to the unique problems faced by math olympiads}
+
+
+\section{Taxonomy of LLM based solutions}
+
+\section{Benchmarks and the hype}
+
+\space The past few years have seen remarkable growth in the power and usage of Large Language Models (\textit{LLMs}), which have led to their implementation in a variety of different fields. One such field is mathematical competitions, where systems of models have allegedly begun to perform at a level that is on-par with the most advanced humans. For example, see the performance of the Google DeepMind IMO Geometry solver \citep{chervonyi2025goldmedalistperformancesolvingolympiad}, or the myriad of systems that claim to solve almost all of the AIME/IMO problems thrown at them (\cite{varambally2025hilbertrecursivelybuildingformal}, \cite{ren2025deepseekproverv2advancingformalmathematical}). If these models were to participate in the past year's IMO competition they would have eclipsed all human results.
+
+\medskip
+
+This is troubling for many mathematicians, students, and thinkers alike, who are deeply concerned with the profound implications of non-living machines being better at the complex reasoning required for proofs than their human counterparts. \textit{Are we becoming obsolete?} The fundamental aim of this thesis would be to decipher the "progress" made by these approaches, the reliability of benchmarks for evaluating performance, and provide a full overview of the existing body of research.
+
+\medskip
+
+\textit{How should we taxonomize these systems?} In 2025, many different models and systems claimed to score extremely well on benchmarks from leading prestigious math exams (see everything I cited in 3.1). However, there does not exist a clear organizational structure or taxonomy of these systems. One of the aims of this thesis would be to clarify the specific types of solutions that have been built. Once approach would be to disambiguate between standalone fine-tuned LLM models and larger systems, and to separate geometric search based solutions from the rest. This separation would hopefully lead a clear chronologically progression from paper to paper charting the advancement of the techniques and models that have yielded the outstanding results that ultimately culminated in the HILBERT paper just a few weeks ago \citep{varambally2025hilbertrecursivelybuildingformal}, where engineers were able to solve and formalize using Lean 4 70\% of problems on PutnamBench \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers}.
+
+\medskip
+
+\textit{And how can we trust the blockbuster results of this research?} 
+\citet{khatibi2025eefsuvanewmathematicalolympiad} provides clear evidence of "data contamination", or that the models fail on problems that do not widely exist on the internet, and are therefore out of distribution. They test this by creating a benchmark consisting of questions sourced from the national math olympiads of Eastern Europe. Despite being at the same level of difficulty as their western counterparts, LLMs perform poorly on these questions, raising concerns. \citet{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} provides an approach that could be used to test this hypothesis. As this is only a one semester thesis, this will be a proposed future direction for exploration, one which I would seriously consider endeavoring into later in my academic career.
+\medskip
+
+In conclusion, this thesis will serve as a \textit{review} of the field of AI proving, urging more caution in the interpretation of these results, as well as explaining how we arrived where we are now.
+
+
+
+
+
+\section{Reading List}
+\subsection{General Proving Systems}
+\begin{enumerate}
+    
+\item \citep{varambally2025hilbertrecursivelybuildingformal} is a paper published by Apple Labs in September 2025. It is the current SOTA method for solving Putnam problems, and runner up to \citet{chen2025seedproverdeepbroadreasoning} for AIME level problems.
+
+\item \citep{chen2025seedproverdeepbroadreasoning} A closed source model that outperforms \citet{liang2025solvingchallengingimoproblems}. It is close lipped about it's approach, but uses an approach similar to \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} combined with a separate prover for MiniF2F non-geometric problems called \textit{SeedProver}.
+
+\item \citep{liang2025solvingchallengingimoproblems} produces a system that serves as a direct precursor to \citet{varambally2025hilbertrecursivelybuildingformal}. It uses an iterative framework instead of a recursive one.
+
+\item  \citep{chervonyi2025goldmedalistperformancesolvingolympiad} Published by DeepMind after they achieved gold medal performance on geometric problems from the IMO. They combine LLM based techniques, brute force search of new facts, and a predefined set of lemmas to solve geometric problems. 
+
+\end{enumerate}
+\subsection{Fine-Tuned Proving Models}
+\begin{enumerate}
+    \item \citep{tian2025evolproveradvancingautomatedtheorem} claims to outperform \citet{ren2025deepseekproverv2advancingformalmathematical} but it is a preprint. 
+    \item \citep{ren2025deepseekproverv2advancingformalmathematical} provides a SOTA 7B parameter LLM model to solve short proofs.
+\end{enumerate}
+
+
+\subsection{Benchmarks}
+\begin{enumerate}
+    \item \textit{MiniF2F}: \space \citep{zheng2022minif2fcrosssystembenchmarkformal} a benchmark of 488 problems drawn from AIME, IMO \& AMC competitions. Considered the gold-standard benchmark for high-school level olympiad math. 
+    \item \textit{PutnamBench}: \space \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers} a benchmark that provides 640 putnam problems and solutions from competitons from the William Lowell Putnam Mathematical Competition, the premier undergraduate-level mathematics competition in North America. All problems have formalizations in Lean 4 and Isabelle. All the hype recently has been around this benchmark.
+\end{enumerate}
+
+\subsection{Useful Supporting Research}
+
+\begin{enumerate}
+    \item \citep{petrov2025proofbluffevaluatingllms}, argues that current off-the-shelf LLMs are insufficient for solving proofs on their own, and that significant fine-tuning and reorganization is required to get better performance. Identified that LLMs have similar failure modes in formal proving. LLMs tend to claim that they solved problems, while having skipped crucial steps for validation and do not have required creativity for solving. 
+    
+    \item \citep{guo2025rightenoughpitfallsoutcome}, addressed many of the flaws in using stock off-the-shelf LLMs to judge the correctness of the proof. They propose their own solution that is significantly better for validation.
+
+    \item \citep{khatibi2025eefsuvanewmathematicalolympiad} supports the claim that there is what is referred to as "data contamination" in existing benchmarks. Many of the problems that appear on these benchmarks have solutions that end up in the training data for models (intentionally or unintentionally) making them generally inadmissable. Paper comes up with a new benchmark to rectify this and shows clear evidence that these LLMs cannot generalize to problems out-of-distribution.
+
+    \item  \citep{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} argues that benchmarks are universally subject to bias and that algorithmically generated sample questions are the only way to go from here. It provides an approach that could be applied to see if these LLMs have this issue.
+\end{enumerate}
+\bibliographystyle{plainnat}
+\bibliography{bibliography} % Specifies the .bib file (references.bib)
+\end{document}
