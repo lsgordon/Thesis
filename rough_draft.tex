@@ -1,45 +1,65 @@
-\UseRawInputEncoding
-\documentclass{article}
+\documentclass[12pt, letterpaper]{article}
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx} % Required for inserting images
-\usepackage[numbers]{natbib}
-\usepackage[nottoc]{tocbibind}
+
+% TYPOGRAPHY & LAYOUT
 \usepackage{geometry}
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{listings}
-\usepackage{tcolorbox}
 \geometry{
   left=1in,
   right=1in,
   top=1in,
   bottom=1in
 }
+\usepackage{newtxtext}  % Times-like font
+\usepackage{newtxmath}  % Matching math font
+\usepackage{microtype}  % Improved justification and spacing
+\usepackage{setspace}   % For line spacing
+% \onehalfspacing       % Uncomment for 1.5 spacing
+
+\usepackage{graphicx}   % Required for inserting images
+\usepackage{fancyhdr}   % For custom headers/footers
+\pagestyle{fancy}       % Apply the fancy header style
+
+% MATH
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}    % Adds math symbols
+\usepackage{amsthm}     % Adds proof/theorem environments
+
+% CODE & TABLES
+\usepackage{listings}
+\usepackage{tcolorbox}
+
+% BIBLIOGRAPHY & REFERENCES
+\usepackage[numbers]{natbib}
+\usepackage[nottoc]{tocbibind} % Adds bibliography to ToC
 \usepackage{xcolor}
-\usepackage[hidelinks]{hyperref}
-\definecolor{greeno}{RGB}{20, 127, 20}  % A nice, bright blue
+\usepackage[hidelinks, colorlinks=true]{hyperref} % hidelinks conflicts with colorlinks
+\usepackage[capitalise]{cleveref} % For \cref{}
+
+% --- Your Custom Settings ---
+
+% Hyperlink colors
+\definecolor{greeno}{RGB}{20, 127, 20}
 \hypersetup{
-    colorlinks=true,   % false: boxed links; true: colored links
-    linkcolor=blue,    % color of internal links
-    citecolor=greeno,   % color of links to bibliography
-    urlcolor=magenta   % color of external links
+    linkcolor=blue,
+    citecolor=greeno,
+    urlcolor=magenta
 }
-% Define a basic style for Lean
+
+% Lean Style (no changes needed)
 \lstdefinestyle{leanstyle}{
   basicstyle=\ttfamily,
   keywordstyle=\color{blue}\bfseries,
   commentstyle=\color{green!40!black},
   stringstyle=\color{purple},
-  % Add the keywords you care about
   morekeywords={have, at, ring_nf, :=, ⊢},
   showstringspaces=false,
-  frame=single, % Add a frame
-  breaklines=true % Automatic line breaks
-  % for the special chars
+  frame=single,
+  breaklines=true,
   literate={⊢}{{$\vdash$}}{1}
 }
 
-
+% --- End of Preamble ---
 \title{Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics (Extremely Rough Draft)}
 \author{Leo Gordon \\  Haverford College }
 % Under the supervision of Steven Lindell
@@ -55,9 +75,7 @@
 \newpage
 \section{Abstract}
 Recent automatic proving systems using Large Language Models (LLMs) like AlphaGeometry and HILBERT report superhuman performance on math olympiad benchmarks (AIME, IMO, Putnam). This thesis critically reviews these claims, questioning whether this is genuine reasoning or sophisticated pattern matching due to data contamination in test sets like MiniF2F and PutnamBench. This thesis proposes a taxonomy of current approaches—from off-the-shelf models to complex systems—and evaluate the compelling evidence for benchmark contamination and the field's reproducibility challenges. This review urges a more cautious interpretation of progress and outlines future directions for more robust evaluation.
-\section{Summary}
 
-\textbf{WRITE A SUMMARY HERE ONCE THE WORK IS DONE}
 \section{Introduction}
 
 In 2016, Google released the world-changing paper \textit{Attention is All you Need} \citep{vaswani2023attentionneed}. Originally intended for use in translation tasks, the transformer took the world by storm, eventually resulting in the widespread adoption and implementation of Large Language Models we see today. Large Language Models (or \textit{LLMs} for short) have crept into virtually every facet of human life, as scientists and researchers scramble to determine how it can be applied to their fields. One such field is the application of Language Models in mathematics competitions or olympiads such as: the AIME, IMO, and Putnam exam.
@@ -101,6 +119,8 @@ LLM System
 Data Contamination
 
 Automated Theorem Proving
+
+SOTA
 
 
 
@@ -345,7 +365,7 @@ Furthermore, Aristotle employs a novel technique called \textit{Test-Time Traini
 % One of the very odd features of this paper is Test-Time-Training, where if the model is unable to solve a problem, it is will learn from it's own experience at inference time. This is done by retraining the model on the search traces from all of the attempts. It is not clear what this does under the hood, they are being secretive intentionally here.
 
 % What is interesting, though, that they claim to have performed extremely well on new out-of-sample IMO problems, something that has not been done before. The runner up was GPT-5 high, with only 40\%. This section will urge the importance of this paper in that context, and that regardless of the trouble with benchmarks, there is real substantive work being done with these models, and they are very smart.
-\section{The trouble with benchmarks}
+\section{The trouble with Benchmarks}
 \label{sec:benchmarks}
 
 In this section I will explain what a benchmark is, when they are commonly deployed, how they are used, etc.
