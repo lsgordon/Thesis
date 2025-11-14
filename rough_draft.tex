@@ -14,6 +14,7 @@
 \usepackage{microtype}  % Improved justification and spacing
 \usepackage{setspace}   % For line spacing
 % \onehalfspacing       % Uncomment for 1.5 spacing
+\usepackage{booktabs}   % Required for tables
 
 \usepackage{graphicx}   % Required for inserting images
 \usepackage{fancyhdr}   % For custom headers/footers
@@ -35,8 +36,8 @@
 \usepackage{xcolor}
 \usepackage[hidelinks, colorlinks=true]{hyperref} % hidelinks conflicts with colorlinks
 \usepackage[capitalise]{cleveref} % For \cref{}
+\usepackage{hyperref}
 
-% --- Your Custom Settings ---
 
 % Hyperlink colors
 \definecolor{greeno}{RGB}{20, 127, 20}
@@ -60,10 +61,10 @@
 }
 
 % --- End of Preamble ---
-\title{Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics (Extremely Rough Draft)}
+\title{Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics (Full Draft)}
 \author{Leo Gordon \\  Haverford College }
 % Under the supervision of Steven Lindell
-\date{October 31st 2025 \\ Under the Supervision of Prof. Steven Lindell }
+\date{November 21st 2025\\ Under the Supervision of Prof. Steven Lindell }
 
 \begin{document}
 
@@ -74,17 +75,17 @@
 
 \newpage
 \section{Abstract}
-Recent automatic proving systems using Large Language Models (LLMs) like AlphaGeometry and HILBERT report superhuman performance on math olympiad benchmarks (AIME, IMO, Putnam). This thesis critically reviews these claims, questioning whether this is genuine reasoning or sophisticated pattern matching due to data contamination in test sets like MiniF2F and PutnamBench. This thesis proposes a taxonomy of current approaches—from off-the-shelf models to complex systems—and evaluate the compelling evidence for benchmark contamination and the field's reproducibility challenges. This review urges a more cautious interpretation of progress and outlines future directions for more robust evaluation.
+Recent automatic proving systems using Large Language Models (LLMs) like AlphaProof and Hilbert report superhuman performance on math olympiad benchmarks (AIME, IMO, Putnam), and silver medal performance on IMO competitions. This thesis critically reviews these claims, questioning whether this is genuine reasoning or sophisticated pattern matching due to data contamination in test sets like MiniF2F and PutnamBench. This thesis additionally proposes a taxonomy of current approaches—from off-the-shelf models to complex systems and evaluates the compelling evidence for benchmark contamination and the field's reproducibility challenges. This review urges a more cautious interpretation of progress and outlines future directions for more robust evaluation, while also highlighting the clear success and promise that these systems contain.
 
 \section{Introduction}
 
-In 2016, Google released the world-changing paper \textit{Attention is All you Need} \citep{vaswani2023attentionneed}. Originally intended for use in translation tasks, the transformer took the world by storm, eventually resulting in the widespread adoption and implementation of Large Language Models we see today. Large Language Models (or \textit{LLMs} for short) have crept into virtually every facet of human life, as scientists and researchers scramble to determine how it can be applied to their fields. One such field is the application of Language Models in mathematics competitions or olympiads such as: the AIME, IMO, and Putnam exam.
+In 2016, Google released the world-changing paper \textit{Attention is All you Need} \citep{vaswani2023attentionneed}. Originally intended for use in translation tasks, the transformer took the world by storm, eventually resulting in the widespread adoption and implementation of Large Language Models we see today. Large Language Models (or \textit{LLMs} for short) have been adopted into virtually every facet of human life, as scientists and researchers scramble to determine how it can be applied to their fields. One such field is the application of Language Models in mathematics competitions or olympiads such as: the AIME, IMO, and Putnam exam.
 
-Math olympiads represent a unique challenge for artificial intelligence. Unlike rote computational tasks or even standard university-level math, olympiad level competitions require a high level of creativity, abstract reasoning, and the ability to synthesize many disparate mathematical concepts into a novel proof strategy, without access to any outside resources. Additionally, the problems are often designed to be non-standard, thus requiring insights that can be derived from following simple or widespread algorithms. For the above reasons, AI performance on this tests has become a de facto benchmark for evaluating these systems.
+Math competitions represent a unique challenge for artificial intelligence. Unlike rote computational tasks or even standard university-level math, olympiad level competitions require a high level of creativity, abstract reasoning, and the ability to synthesize many disparate mathematical concepts into a novel proof strategy, without access to any outside resources. Additionally, the problems are often designed to be non-standard, thus requiring insights that can be derived from following simple or widespread algorithms. For the above reasons, AI performance on these tests has become the facto benchmark for evaluating these systems.
 
-In recent years, a flurry of papers have claimed significant and superhuman performance on this topic. Systems such as DeepMid's \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} and Apple's HILBERT \citep{varambally2025hilbertrecursivelybuildingformal} have reported results on established benchmarks like the IMO and PutnamBench, that would, in some cases, surpass top human competitors, winning in gold medals in some years. These outstanding results have led to excitement and trepidation, fueling speculation about what the future of the field of mathematics as a whole will look like, and the obselence of human intellect.
+In recent years, a rapid succession papers have claimed significant and superhuman performance on this topic, known as Automated Theorem Proving (ATP). Systems such as DeepMind's \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} and Apple's Hilbert \citep{varambally2025hilbertrecursivelybuildingformal} have reported results on established benchmarks like the IMO and PutnamBench, that would, in some cases, surpass top human competitors, winning in gold medals in some years. These outstanding results have led to excitement and trepidation, fueling speculation about what the future of the field of mathematics as a whole will look like, and the obsolescence of human intellect.
 
-However, these headline-grabbing results require much scrutiny. Beyond the surface of the reported near-perfect performances, many critical questions remain regarding the true generalization capabilities of these models. A primary concern, highlighted by \citet{khatibi2025eefsuvanewmathematicalolympiad} is the potential for "data contamination", where problems and their solutions are highlighted, as highlighted by \citet{balunovic2025matharena} where problems and their solutions from popular benchmarks may have been included in the vast training corpora of these models. This raises a fundamental question: are these systems genuinely "reasoning," or are they performing a sophisticated form of pattern matching on familiar problems? There is strong reason for concern, as evidenced by \citet{balunovic2025matharena}, where models were tested on questions that came from after models' training cutoffs, and the results plummeted in precision.
+However, these highly-publicized results require much scrutiny. Beyond the surface of the reported near-perfect performances, many critical questions remain regarding the true generalization capabilities of these models. A primary concern, highlighted by \citet{khatibi2025eefsuvanewmathematicalolympiad} is the potential for "data contamination", where problems and their solutions are highlighted, as highlighted by \citet{balunovic2025matharena} where problems and their solutions from popular benchmarks may have been included in the vast training corpora of these models. This raises a fundamental question: are these systems genuinely "reasoning," or are they performing a sophisticated form of pattern matching on familiar problems? There is strong reason for concern, as evidenced by \citet{balunovic2025matharena}, where models were tested on questions that came from after models' training cutoffs, and the results plummeted in precision.
 
 This thesis aims to address these issues by providing a comprehensive review and analysis of the current landscape of LLM-Based mathematical prover systems and problem solvers. The primary goals are the following:
 \begin{enumerate}
@@ -97,40 +98,68 @@ This thesis aims to address these issues by providing a comprehensive review and
 Ultimately, this thesis will serve as a foundational review, urging a more cautious and nuanced interpretation of the progress in automated mathematical reasoning, and outlining more robust avenues for future evaluation.
 \section{Motivation}
 
-The field of LLM-Based proving systems is currently at a critical and perhaps inflated juncture. Systems like like DeepMind's \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} and Apple's HILBERT \citep{varambally2025hilbertrecursivelybuildingformal} have published results claiming superhuman performance on prestigious olympiad benchmarks scoring results that would easily give gold medals on the IMO, and dominate the Putnam exam.
+The field of LLM-Based proving systems is currently at a critical juncture. Systems like like DeepMind's \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} and Apple's Hilbert \citep{varambally2025hilbertrecursivelybuildingformal} have published results claiming superhuman performance on prestigious olympiad benchmarks scoring results that would easily give gold medals on the IMO, and dominate the Putnam exam.
 
-As a somewhat obvious result of these purported claims, there has been a considerable amount of attention, hype and general excited around these systems, especially with respect to how these models are eclipsing humans. As stated previously, these are really hard problems to solve, and they hint at these systems being able to do far more than what we currently anticipate. This narrative, however compelling, demands intense scrutiny.
+As a somewhat obvious result of these purported claims, there has been a considerable amount of attention, hype and general excitement around these systems, especially with respect to how these models are eclipsing humans. As stated previously, these are really hard problems to solve, and they hint at these systems being able to do far more than what we currently anticipate. This narrative, however compelling, demands intense scrutiny.
 
-The primary motivation for this thesis is to address the disconnect between these reported outstanding results and the growing body of evidence suggesting that these results are overexaggurated, and many times unreliable. Many papers, such as, \citet{khatibi2025eefsuvanewmathematicalolympiad} and \citet{balunovic2025matharena} provide compelling evidence that "data contamination" is rampant in these systems, or that many of the questions on the benchmarks were likely ingested during the general training of Off-The-Shelf LLMs. So are we even celebrating genuine progress in the field, or are we looking at statistical pattern matching from a contaminated test set?
+The primary motivation for this thesis is to address the disconnect between these reported outstanding results and the growing body of evidence suggesting that these results are exaggerated, and many times unreliable. Many papers, such as, \citet{khatibi2025eefsuvanewmathematicalolympiad} and \citet{balunovic2025matharena} provide compelling evidence that "data contamination" is rampant in these systems, or that many of the questions on the benchmarks were likely ingested during the general training of Off-The-Shelf LLMs. So are we even celebrating genuine progress in the field, or are we looking at statistical pattern matching from a contaminated test set?
 
-Furthermore, this field has moved at lightspeed over the past 18 months to produce paper after paper, introducing an entirely new type of system, or claiming better results. No one has yet to look back on the entire body of study, to critically determine the differences between all of the existing approaches. This analysis will reveal what can be combined, what can be improved upon, and any logical next steps to improve performance.
+Furthermore, this field has progressed rapidly over the past 18 months to produce paper after paper, introducing an entirely new type of system, or claiming better results. No one has yet to look back on the entire body of study, to critically determine the differences between all of the existing approaches. This analysis will reveal what can be combined, what can be improved upon, and any logical next steps to improve performance.
 \section{Background}
 
 The field of technologies related to language models is rapidly evolving, with quickly changing terminology and definitions. Here are some select terms that will be useful for this paper:
 
-\textsc{Do this section last because lord knows what will actually be needed }
+% \textsc{Do this section last because lord knows what will actually be needed }
 
-LLM
+\textbf{LLM}
 
-Fine-Tuning
-
-LLM System
-
-Data Contamination
-
-Automated Theorem Proving
-
-SOTA
+Refers to a Large Language Model, characterized by having a large size (in the billions or trillions of parameters) and having a deep learning/transformer architecture. These models are generally trained on massive corpora of texts, encompassing nontrivial fractions of all publicly available information on the internet.
 
 
+\textbf{Fine-Tuning}
 
-\subsection{LLM-As-A-Judge}
+The process of adapting a general-purpose, pre-trained model (like an LLM) for a specific task or domain. This is done by taking specific examples from the subdomain that the model is being fine-tuned to, and continuing training for this subset.
 
-How to use LLMs to automatically judge proofs? Answer, Use \citep{guo2025rightenoughpitfallsoutcome} for this one. Essentially, the stock models are really bad at this and need good system prompts. This is also similar to the verification work that will be talked about for 4.1, but a little more in depth. They come up with a model-agnostic verification system that improves accuracy rather a lot. This is done by giving individual runs of agents very small context windows of the only part of the proof that they are focusing on, because then the agent will be more rigorous.
+\textbf{LLM System}
 
-\subsection{Lean 4 Syntax}
+Much like a distributed system encapsulates many different programs being run on different computation instances, an LLM System in the context of this thesis refers to an interdependent and connected system of LLM calls where each call has a specific role.
 
-Have statements, sorry, general syntax
+\textbf{Data Contamination}
+
+
+A critical methodological error in machine learning where information from the evaluation or test dataset inadvertently "leaks" into the training dataset. This leads to an overestimation of the model's performance and invalidates the evaluation results. Sort of like looking at the answers to an exam before taking it.
+
+\textbf{Automated Theorem Proving (ATP)}
+
+A subfield of artificial intelligence and mathematical logic focused on the development of computer programs to automatically discover, construct, and verify formal proofs for mathematical theorems.
+
+
+\textbf{SOTA:} 
+
+
+Literally means \textit{State of The Art} or, the best current approach.
+
+\textbf{Pass@N:} 
+
+The number of trials run for a given task before yielding a success or failure. If at least one of the trials is successful then the task is successful at $N$ trials.
+
+
+
+\textbf{LLM-As-A-Judge}
+
+A technique involving the use of a Large Language Model to automatically evaluate the correctness of mathematical proofs or reasoning steps. Standard, off-the-shelf LLMs have been shown to be unreliable for this task, often failing to identify logical flaws when assessing a complete proof \citep{guo2025rightenoughpitfallsoutcome}. Research, such as that by \citet{guo2025rightenoughpitfallsoutcome}, has proposed model-agnostic verification systems to improve accuracy. This is achieved by providing the "judge" model with very small, focused context windows, compelling it to rigorously evaluate only one specific part of a proof at a time rather than being misled by the proof's broader structure.
+
+\textbf{Lean 4 Overview}
+
+Lean 4 is a functional programming language and interactive theorem prover used to write formal, machine-verified mathematical proofs. While understanding the exact syntax is not neccesary for this literature review, there are a few critical features of it's syntax required to understand the systems henceforth.
+
+\begin{enumerate}
+    \item A \texttt{have} statement is a keyword used inside a proof to introduce an intermediate step or lemma. It allows you to state a new claim, provide its proof in a nested block, and then use that proven claim to help prove the main goal.
+    \item A \texttt{sorry} statement is a placeholder tactic that tells the Lean compiler to accept a proof goal as complete without an actual proof. It is used to temporarily bypass difficult steps and continue working on other parts of a larger proof, but it ultimately signifies an incomplete or unverified part of the theorem. These are generally used in the earliest stages of generating a proof, and must be completely resolved by the end of the proof generation process.
+\end{enumerate}
+
+
+A critical enabler for this line of research has been the development of environments and toolkits like \textbf{LeanDojo} \citep{yang2023leandojotheoremprovingretrievalaugmented}. LeanDojo provides a comprehensive toolkit for interacting with the Lean proof assistant, enabling researchers to extract proof states, premises, and tactics from existing Lean projects like Mathlib. More importantly, it established a framework for retrieval-augmented language models, where a model's generation process is guided by "retrieving" relevant theorems and definitions from the vast Mathlib library. This retrieval-augmented generation (RAG) approach, facilitated by tools like LeanDojo, became a foundational component for many of the sophisticated provers and systems that followed.
 
 \subsection{Upcoming sections}
 
@@ -139,12 +168,13 @@ In \autoref{sec:taxonomy}, we give a general taxonomy of LLM based solutions, ch
 \section{Taxonomy of LLM based solutions}
 \label{sec:taxonomy}
 
-% This section will serve as a general hierarchy of what the current techniques look like, which problems they work on (geometric or non-geometric) and go from least to most complex. This is why it makes sense to do LLMs, then LLM as a judge, then fine tuning, the geometric searchers, then the big systems. The geometric searchers could be in their own category entirely, but I think that because they are sometimes used in the LLM systems, it makes sense to include them in this category. I will also make sure that I use all of the references in the annotated bibliography, for the sake of simplicity I have not included them here. This will include an in depth study of the defining fears of the standalone models and a comparison of their strengths and weaknesses. It will rely heavily on matharena and HILBERT for the hard numerical stats. 
+% This section will serve as a general hierarchy of what the current techniques look like, which problems they work on (geometric or non-geometric) and go from least to most complex. This is why it makes sense to do LLMs, then LLM as a judge, then fine tuning, the geometric searchers, then the big systems. The geometric searchers could be in their own category entirely, but I think that because they are sometimes used in the LLM systems, it makes sense to include them in this category. I will also make sure that I use all of the references in the annotated bibliography, for the sake of simplicity I have not included them here. This will include an in depth study of the defining fears of the standalone models and a comparison of their strengths and weaknesses. It will rely heavily on matharena and Hilbert for the hard numerical stats. 
 
 
 \subsection{Off-The-Shelf LLMs}
 
 What does it even mean to try to have a Language Model try to solve a math problem? The trivial solution to this question is to just ask a model to generate a proof to a problem in natural language, based on a problem statement. This is the core idea that separates LLM-Based solutions from non LLM-Based solutions. We are trying to take advantage of the insights gained from training these models to yield a genuine creative power for solving novel and hard problems. 
+
 
 With the raw reasoning power that these models have accumulated over the past few years, it is therefore no surprise that their strength has grown exponentially on mathematical reasoning problems, with one study reporting  that Gemini 2.5 Pro had a 49\% pass rate \citep{zhou2025solvingformalmathproblems}on the Mini-F2F benchmark \citet{zheng2022minif2fcrosssystembenchmarkformal}, which comprises a mix of undergraduate and high-school olympiad level problems. How do these base models even do this? 
 
@@ -161,11 +191,11 @@ steps, have incorrect rationales, or misinterpret previous progress. They also t
 
 While Off-The-Shelf LLMs provide a powerful baseline, their general-purpose training is not optimized for the exact precision required by formal proof languages. The next major leap in performance came from creating specialized models, or "fine-tuned LLMs," which are trained specifically on massive, synthetically-generated datasets of formal proof problems. This approach, often called "expert iteration," involves using models to generate new proofs, verifying them, and adding the successful ones back into the training data to create a progressively stronger "expert" model.
 
-A foundational paper in this area is DeepSeek-Prover-V2 \citep{ren2025deepseekproverv2advancingformalmathematical}. This work established a "cold-start" data synthesis pipeline that effectively bridges the gap between informal, human-like reasoning and formal, machine-verifiable code. The process begins by using a powerful generalist model (DeepSeek-V3) to read a complex problem and generate a high-level, natural language proof sketch, simultaneously decomposing the problem into a series of simpler subgoals. A smaller, more specialized 7B parameter prover model is then tasked with solving these more manageable subgoals. The successful formal proofs for these subgoals are then synthesized and combined with the original high-level reasoning sketch, creating a rich new data point. This dataset, which unifies informal strategy with formal execution, is then used to train the final, large-scale specialist model (DeepSeek-Prover-V2-671B) using Reinforcement Learning (RL). This paper set a new state-of-the-art at its time, demonstrating the power of this "sketch-and-solve" data pipeline. DeepSeek-Prover-V2-671B was able to achieve an 82\% pass rate on 32 trials using chain of thought, which improved to 89\% with 8192 trials. In non chain of though mode, it only achieved 74\% pass rate on 32 trials. DeepSeek-Prover-V2-7B achieved 75.6\% pass rate at 32 trials using chain of thought, while not using chain of thought, it achieved a 68\% pass rate. For such a small model, these results are very impressive.
+A foundational paper in this area is \textbf{DeepSeek-Prover-V2} \citep{ren2025deepseekproverv2advancingformalmathematical}. This work established a "cold-start" data synthesis pipeline that effectively bridges the gap between informal, human-like reasoning and formal, machine-verifiable code. The process begins by using a powerful generalist model (DeepSeek-V3) to read a complex problem and generate a high-level, natural language proof sketch, simultaneously decomposing the problem into a series of simpler subgoals. A smaller, more specialized 7B parameter prover model is then tasked with solving these more manageable subgoals. The successful formal proofs for these subgoals are then synthesized and combined with the original high-level reasoning sketch, creating a rich new data point. This dataset, which unifies informal strategy with formal execution, is then used to train the final, large-scale specialist model (DeepSeek-Prover-V2-671B) using Reinforcement Learning (RL). This paper set a new SOTA at its time, demonstrating the power of this "sketch-and-solve" data pipeline. DeepSeek-Prover-V2-671B was able to achieve an 82\% pass rate at pass@32 using chain of thought, which improved to 89\% with 8192 trials. In non chain of though mode, it only achieved 74\% on pass@32. DeepSeek-Prover-V2-7B achieved 75.6\% pass rate on  pass@32 chain of thought, while not using chain of thought, it achieved a 68\% pass@32 rate. For such a small model, these results are very impressive.
 
-The next major advancement, Goedel-Prover-V2 \citep{lin2025goedelproverv2scalingformaltheorem}, built directly upon this established expert iteration and RL pipeline. In fact, it even used the DeepSeek-Prover models to help generate its initial dataset. The innovations of Goedel-Prover-V2 demonstrated that a smarter training process could dramatically outperform raw model scale; its 8B parameter model successfully outperformed the 671B DeepSeek-Prover-V2 on the MiniF2F benchmark. This was achieved through three key innovations: \begin{enumerate} \item \textbf{Verifier-Guided Self-Correction:} This was the most significant leap. Instead of just generating a proof in a single pass, the model iteratively revises its own attempts. It generates a proof, receives direct error feedback from the Lean compiler (the "verifier"), and then uses that feedback to generate a corrected proof. This human-like feedback loop proved far more effective than simple generation. \item \textbf{Scaffolded Data Synthesis:} A more advanced form of data generation. If a proof for a problem failed, the model was prompted to generate simpler related problems. If a proof succeeded, it was prompted to generate harder variants. This created a "scaffolded" curriculum of increasing difficulty. \item \textbf{Model Averaging:} A training technique to mitigate the loss of output diversity that often occurs during late-stage RL training. By averaging the weights of different model checkpoints, the final model retained a wider variety of problem-solving strategies. \end{enumerate} Goedel-Prover-V2's success showed that the path forward was not just bigger models, but models that could learn from their own mistakes. It achieved 90.4\% accuracy at 32 trials with with self-correction on.
+The next major advancement, \textbf{Goedel-Prover-V2} \citep{lin2025goedelproverv2scalingformaltheorem}, built directly upon this established expert iteration and RL pipeline. In fact, it even used the DeepSeek-Prover models to help generate its initial dataset. The innovations of Goedel-Prover-V2 demonstrated that a smarter training process could dramatically outperform raw model scale; its 8B parameter model successfully outperformed the 671B DeepSeek-Prover-V2 on the MiniF2F benchmark. This was achieved through three key innovations: \begin{enumerate} \item \textbf{Verifier-Guided Self-Correction:} This was the most significant leap. Instead of just generating a proof in a single pass, the model iteratively revises its own attempts. It generates a proof, receives direct error feedback from the Lean compiler (the "verifier"), and then uses that feedback to generate a corrected proof. This human-like feedback loop proved far more effective than simple generation. \item \textbf{Scaffolded Data Synthesis:} A more advanced form of data generation. If a proof for a problem failed, the model was prompted to generate simpler related problems. If a proof succeeded, it was prompted to generate harder variants. This created a "scaffolded" curriculum of increasing difficulty. \item \textbf{Model Averaging:} A training technique to mitigate the loss of output diversity that often occurs during late-stage RL training. By averaging the weights of different model checkpoints, the final model retained a wider variety of problem-solving strategies. \end{enumerate} Goedel-Prover-V2's success showed that the path forward was not just bigger models, but models that could learn from their own mistakes. It achieved 90.4\% accuracy at pass@32 with with self-correction on.
 
-Concurrently, another line of research focused on a different, critical weakness: the \textit{fragility} of these models. \citet{tian2025evolproveradvancingautomatedtheorem} introduced EvolProver, a 7B non-reasoning model designed to improve generalizability and robustness. This work, which used DeepSeek-Prover-V1.5 as its base model , argued that existing models were too easily broken by minor, semantically-irrelevant transformations of a problem statement. The entire focus of this paper was on data augmentation, introducing three novel techniques: \begin{itemize} \item \textbf{EvolAST:} A deterministic method to create new training data. It parses a formal statement (like x+y=z) into an Abstract Syntax Tree (AST), applies logical equivalence rules (like commutativity, y+x=z), and then recompiles the new AST into a syntactically different but semantically identical problem. \item \textbf{EvolDomain:} An LLM-driven method to "evolve" problems by translating their core logic across different mathematical domains (e.g., translating a number theory problem into a geometry problem). \item \textbf{EvolDifficulty:} An LLM-driven method, similar to Goedel's scaffolding, to generate new theorems with a wider range of difficulty. \end{itemize} EvolProver demonstrated that by training on this highly diverse and robust dataset, a small, efficient 7B \textit{non-reasoning} model could achieve SOTA performance for its class, even outperforming several larger \textit{reasoning} models on benchmarks like FormalMATH-Lite. This progression—from DeepSeek's "sketch-and-solve" data, to Goedel's "self-correcting" loop, to EvolProver's "robustness-focused" data—charts a clear path from brute-force synthesis toward more intelligent and resilient training paradigms. EvolProver achieved a pass rate of 69.8\% in 32 trials, which is the state of the art for no chain of thought. 
+Concurrently, another line of research focused on a different, critical weakness: the \textit{fragility} of these models. \citet{tian2025evolproveradvancingautomatedtheorem} introduced \textbf{EvolProver}, a 7B non-reasoning model designed to improve generalizability and robustness. This work, which used DeepSeek-Prover-V1.5 as its base model , argued that existing models were too easily broken by minor, semantically-irrelevant transformations of a problem statement. The entire focus of this paper was on data augmentation, introducing three novel techniques: \begin{itemize} \item \textbf{EvolAST:} A data-augmentation method to create new training data. It parses a formal statement (like x+y=z) into an Abstract Syntax Tree (AST), applies logical equivalence rules (like commutativity, y+x=z), and then recompiles the new AST into a syntactically different but semantically identical problem. \item \textbf{EvolDomain:} An LLM-driven method to "evolve" problems by translating their core logic across different mathematical domains (e.g., translating a number theory problem into a geometry problem). \item \textbf{EvolDifficulty:} An LLM-driven method, similar to Goedel's scaffolding, to generate new theorems with a wider range of difficulty. \end{itemize} EvolProver demonstrated that by training on this highly diverse and robust dataset, a small, efficient 7B \textit{non-reasoning} model could achieve SOTA performance for its class, even outperforming several larger \textit{reasoning} models on benchmarks like FormalMATH-Lite. This progression—from DeepSeek's "sketch-and-solve" data, to Goedel's "self-correcting" loop, to EvolProver's "robustness-focused" data—charts a clear path from brute-force synthesis toward more intelligent and resilient training paradigms. In the end, EvolProver achieved a 69.8\% rate at pass@32, which is the SOTA for no chain-of-thought. 
 
 It is important to note that a lack of standardized evaluation protocols complicates direct comparisons between models like Goedel-Prover and EvolProver. The papers report performance using different sample budgets (e.g., pass@32, pass@1024, pass@8192) and methodologies, such as with or without Chain-of-Thought or verifier-guided self-correction. Furthermore, the internal development process—such as the number of training iterations conducted before selecting the final published model—remains opaque. This opacity raises concerns about selective reporting, analogous to "p-hacking," where only the most favorable results might be published. However, even accounting for this methodological skepticism, the significant performance gains across these models clearly indicate substantial progress in the field, affirming the high capability of these fine-tuned provers.
 
@@ -189,7 +219,7 @@ AlphaGeometry2 (AG2) is a system that surpassed the performance of an average IM
 The core of AG2 is its symbolic engine, \textbf{DDAR} (Deductive Database Arithmetic Reasoning), which is responsible for computing the "deduction closure"---the set of all provable facts given the problem's starting conditions. The original AG1 used DDAR1, which was slow; for instance, its search for similar triangles had a time complexity of $O(N^8)$. DDAR2, the new engine in AG2, is a "stronger and faster symbolic engine" due to several upgrades. Algorithmically, it uses more efficient methods like hashing to find similar triangles and cyclic quadrilaterals. Physically, the engine's core was rewritten in C++ and exposed to Python via pybind11, resulting in a speedup of over 300x in benchmark tests (from $\approx$1180 seconds to $\approx$3.4 seconds). Critically, DDAR2 also added the ability to handle "double points," a technique that allows the system to prove that two points with different definitions (e.g., $X$ as the intersection of lines $a, b$ and $X'$ as the intersection of line $a$ and circle $w$) are, in fact, the same point. This enables powerful proof by reformulation.
     AG1 used a simple beam search to find proofs. AG2 introduces a far more robust algorithm called \textbf{Shared Knowledge Ensemble of Search Trees (SKEST)}. In this system, multiple, differently-configured search trees (e.g., one that adds one auxiliary point at a time, one that adds multiple) are executed in parallel, often using different LLMs. \citep{chervonyi2025goldmedalistperformancesolvingolympiad}
 \subsubsection{Seed-Geometry}
-Similar to AlphaGeometry, Seed-Geometry \citep{chen2025seedproverdeepbroadreasoning} is a neuro-symbolic system designed to solve complex geometry problems. It was developed as a component of the larger \textbf{Seed-Prover} system, which is a "lemma-style whole-proof reasoning model" designed to work with the formal language Lean. The authors of Seed-Prover noted a "lack of sufficient geometry support in Lean" and therefore built Seed-Geometry as a "dedicated geometry reasoning engine" to handle this domain. Like AG2, Seed-Geometry is a neuro-symbolic system that follows a forward-chaining design . It pairs a high-performing LLM from the "Seed family" with a "specialized reasoning engine". As a proprietary system, we don't know many of the exact details.
+Similar to AlphaGeometry, Seed-Geometry \citep{chen2025seedproverdeepbroadreasoning} is a \textbf{neuro-symbolic system} designed to solve complex geometry problems. It was developed as a component of the larger \textbf{Seed-Prover} system, which is a "lemma-style whole-proof reasoning model" designed to work with the formal language Lean. The authors of Seed-Prover noted a "lack of sufficient geometry support in Lean" and therefore built Seed-Geometry as a "dedicated geometry reasoning engine" to handle this domain. Like AG2, Seed-Geometry is a neuro-symbolic system that follows a forward-chaining design . It pairs a high-performing LLM from the "Seed family" with a "specialized reasoning engine". As a proprietary system, we don't know many of the exact details.
 A core theme shared with AG2 is the emphasis on speed and data. The Seed-Geometry engine was also rewritten in C++ (from a Python implementation in its predecessor, TongGeometry) for a 100-fold speed increase. This speed was necessary to power its "extensive search" data generation pipeline, which created a massive repository of over \textbf{230 million unique geometry problems}. This vast synthetic dataset was then used to train the Seed LLM policy model, granting it the expert intuition needed to guide the symbolic prover.
 
 \medskip
@@ -197,17 +227,23 @@ A core theme shared with AG2 is the emphasis on speed and data. The Seed-Geometr
 In summary, both AG2 and Seed-Geometry demonstrate that SOTA performance in olympiad geometry is currently achieved not by a single monolithic LLM, but by a complex system. These systems pair an LLM trained on massive synthetic datasets (100M-200M+ problems) for creative intuition, with a highly-optimized, custom-built symbolic engine (often in C++) for fast and rigorous logical deduction.
 
 \subsection{LLM-Systems}
-
+\label{sec:proofsystems}
 In the previous subsections of this chapter, we have seen many individual single LLM solutions that can be employed to tackle proving math problems. However, there are fundamental limits with these single model approaches. Models work best on solving specific subproblems, and fulfilling specific and well defined roles. These systems will serve to further specialize the roles of these models in creating proofs. In this section, therefore, we will increase the complexity of our approaches to incorporate different instances of LLMs communicating with one another and acting as agents fulfilling specific roles. Furthermore, in this section, our focus shifts entirely away from proofs in natural language, and instead entirely towards formalisms in \textbf{Lean 4}. Lean 4 is a high performance functional programming language in a category known as proof assistants, which rigourously check and prove mathematical theorems. With these generated Lean 4 snippets, we are able to automatically judge proof correctness instead of relying on LLM as a judge or other subjective techniques.
 
 \subsubsection{Tencent Decoupled reasoning}
 
 In July of 2025, scientists at \textit{Tencent AI Lab} published a pivotal paper \textit{Technical Report
 Towards Solving More Challenging IMO Problems via Decoupled
-Reasoning and Proving} \cite{zhou2025solvingformalmathproblems}, in which they created one of the first comprehensive systems dedicated to solving olympiad level math problems. This paper was published as a reaction to many of the fine tuned provers mentioned in \autoref{sec:provers}, and their performance on more complicated problems. \citet{dekoninck2025openproofcorpuslargescale} found that \textit{Top-tier LLMs like Gemini 2.5
+Reasoning and Proving} \cite{zhou2025solvingformalmathproblems}, in which they created one of the first comprehensive systems dedicated to solving olympiad level math problems. This paper was published as a reaction to many of the fine tuned provers mentioned in \autoref{sec:provers}, and their performance on more complicated problems. 
+
+This "decoupled" approach, separating high-level reasoning from low-level formal proving, builds on foundational work like \textit{Draft, Sketch, and Prove} (DSP) from 2023 \citep{jiang2023draftsketchproveguiding}. The authors of DSP were among the first to formalize a method for bridging the gap between human-readable proofs and machine-verifiable ones. Their key insight was to use an LLM to first generate an informal, natural-language proof (the "draft"). This draft was then used as a high-level guide to produce a formal proof "sketch," which outlines the key steps and intermediate lemmas in the formal language, but leaves the detailed proofs of each step incomplete (often filled with `sorry` statements). This sketch then provides the crucial scaffolding for an automated prover to complete the proof. This methodology provided the conceptual groundwork for the more advanced \textit{Reasoner} and \textit{Prover} architectures that followed.
+
+\citet{dekoninck2025openproofcorpuslargescale} found the following: \begin{quote}
+    {Top-tier LLMs like Gemini 2.5
 Pro can generate informal, natural-language solutions with over 80\% accuracy after human verification. In
 contrast, the best formal prover Deepseek-Prover-V2 671B struggles to solve even 8\% of the same problems
-directly.} 
+directly.} \citet{dekoninck2025openproofcorpuslargescale}
+\end{quote}
 
 Why is this? \citet{zhou2025solvingformalmathproblems} gives a clear culprit as \textit{Reinforcement Learning
 With Verifiable Rewards (RLVR)}: \begin{quote} {This methodology [RVLR], used to train models like DeepSeek-Prover-v2
@@ -268,21 +304,24 @@ Also crucially included in this system prompt is a clear and expected output for
         \item Ensure all sub-theorems are expressed using the same formal syntax and conventions as the input theorem.
     \end{itemize}
 \end{tcolorbox} \citep{zhou2025solvingformalmathproblems}
-Thus the output of this \textit{Reasoner} will be a list of unproven statements, which can be analyzed and fed into the \textit{Prover}. Using this simple approach, we can yield an entire end-to-end solution, that rectifies the negative aspect of both sets of models. This is the core first step towards building better systems for Automated Theorem Proving, and it yielded some spectacular results. Although they did not run their system on an established benchmark like \textit{PutnamBench} or \textit{MiniF2F}, they instead tested on a set of hard IMO problems from the exam offered in 2024 They were able to solve five of the previously unsolved problems. This marks a clear milestone of progress, which was only confirmed by HILBERT in  \ref{sec:hilbert}.
+Thus the output of this \textit{Reasoner} will be a list of unproven statements, which can be analyzed and fed into the \textit{Prover}. Using this simple approach, we can yield an entire end-to-end solution, that rectifies the negative aspect of both sets of models. This is the core first step towards building better systems for Automated Theorem Proving, and it yielded some spectacular results. Although they did not run their system on an established benchmark like \textit{PutnamBench} or \textit{MiniF2F}, they instead tested on a set of hard IMO problems from the exam offered in 2024 They were able to solve five of the previously unsolved problems. This marks a clear milestone of progress, which was only confirmed by Hilbert in  \ref{sec:hilbert}.
 
 % This section will also cover the the Tencent AI paper where they didn't use recursive subcomposition, and instead did a linear approach, one pass of subgoal decomposition, and importantly, the reason why we use don't use the fine-tuned 7b models for every step of this proving process, instead only using them for small lemmas in the process.
+
+\subsection{SeedProver}
+TODO Write this section
 
 \subsubsection{Hilbert}
 \label{sec:hilbert}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{HILBERT_overview.png}
-    \caption{HILBERT architecture and overview. \citet{varambally2025hilbertrecursivelybuildingformal}}
+    \caption{Hilbert architecture and overview. \citet{varambally2025hilbertrecursivelybuildingformal}}
     \label{fig:placeholder}
 \end{figure}
 In the prior approach by \citet{zhou2025solvingformalmathproblems}, we saw a single model create a high level overview for the entire problem at once, in a rather linear fashion. The model simply generates a template of what lemmas need to be proven, which are then handed off to the \textit{Prover} for formal proof generation. This approach, however, only works assuming that the problem is simple enough that it can be decomposed into lemmas in a single pass, and that the problem can be solved by the \textit{Prover} in a single pass. Except, there are cases where this may not be true, for particularly hard problems like those on \textit{PutnamBench}, it may require so much reasoning that solving these problems is quite challenging for a single decomposition step. 
 
-So instead of having a fixed pathway to decompose our problem, what if we took a more recursive approach? This is exactly what Hilbert \citep{varambally2025hilbertrecursivelybuildingformal}, an ATP system created by Apple Labs, does. Released in late September of this year, Hilbert blows every single benchmark out of the water, achieving SOTA performance on everything thrown at it. Particularly of interest, it was one of only two  systems that were able to solve over 25\% of the problems on \textit{PutnamBench}. In fact, it was able to achieve 70\% accuracy in generating a verified formal proof in Lean 4. Given exam grades from the past few years, assuming that a verified Lean 4 submission would be considered a complete proof with a 10/10 score, and that there was no partial credit, you would expect on average the model to score around an 84/120 on the exam, which would easily place it in the top 20 participants, and assuming that there was any partial credit given, it would not be outside of the realm of the possibility for this system to achieve gold-level results on one of these exams. 
+So instead of having a fixed pathway to decompose our problem, what if we took a more recursive approach? This is exactly what Hilbert \citep{varambally2025hilbertrecursivelybuildingformal}, an ATP system created by Apple Labs, does. Released in late September of this year, Hilbert outperforms all other benchmarks, achieving SOTA performance on everything thrown at it. Particularly of interest, it was one of only two  systems that were able to solve over 25\% of the problems on \textit{PutnamBench}. In fact, it was able to achieve 70\% accuracy in generating a verified formal proof in Lean 4. Given exam grades from the past few years, assuming that a verified Lean 4 submission would be considered a complete proof with a 10/10 score, and that there was no partial credit, you would expect on average the model to score around an 84/120 on the exam, which would easily place it in the top 20 participants, and assuming that there was any partial credit given, it would not be outside of the realm of the possibility for this system to achieve gold-level results on one of these exams. 
 
 \medskip
 
@@ -335,28 +374,41 @@ This recursive process continues until either the subgoal is proven or a maximum
 
 \medskip
 
-It is clear from the published results that Hilbert is a massive leap forward over \citep{zhou2025solvingformalmathproblems}. Achieving an astounding 99.2\% accuracy on the \textit{Mini-F2F} benchmark and 70\% on \textit{PutnamBench}, {Hilbert} is clearly light years ahead of the other open-source competition.
+It is clear from the published results that Hilbert is a massive leap forward over \citep{zhou2025solvingformalmathproblems}. Achieving an astounding 99.2\% accuracy on the \textit{Mini-F2F} benchmark and 70\% on \textit{PutnamBench}, {Hilbert} is clearly far ahead of the other open-source competition.
 
 
-% This will talk about Apple's HILBERT Paper, and the crazy approach that they used. It will explain the general workflow of subgoal decomposition, proving, shallow solving, and then further decomposition if neccesary. It will also go in-depth on the agent systems that are being employed, the work of validators, retrievers, and reasoners to generate complete proofs. 
+% This will talk about Apple's Hilbert Paper, and the crazy approach that they used. It will explain the general workflow of subgoal decomposition, proving, shallow solving, and then further decomposition if neccesary. It will also go in-depth on the agent systems that are being employed, the work of validators, retrievers, and reasoners to generate complete proofs. 
 
 % This paper is the current state of the art, on benchmarks. I will discuss the problems with this, especially in relation to the use of lemmas from external libraries, and the emphasis on past problems.
 \subsubsection{Aristotle}
-In July 2025, the AI lab Harmonic introduced \textbf{Aristotle}, an AI system that achieved a gold-medal-equivalent performance on the 2025 International Mathematical Olympiad (IMO) by providing formally verified Lean 4 solutions to five out of the six problems \citep{achim2025aristotleimolevelautomatedtheorem}. \cite{achim2025aristotleimolevelautomatedtheorem} This performance was notable as the only human step was the initial hand-translation of the informal problem statements into formal Lean statements; all intermediate lemmas were autoformalized by the system \citep{achim2025aristotleimolevelautomatedtheorem}.
+In July 2025, the AI lab Harmonic introduced \textbf{Aristotle}, an AI system that achieved a gold-medal-equivalent performance on the 2025 International Mathematical Olympiad (IMO) by providing formally verified Lean 4 solutions to five out of the six problems. This performance was notable as the only human step was the initial transcription of the informal problem statements into formal Lean statements; all intermediate lemmas were autoformalized by the system.
 
-Aristotle's architecture is fundamentally different from the LLM-driven decomposition pipelines of the Tencent paper and Hilbert. Instead of relying on an LLM to recursively break down a problem until a simple "Prover" model can solve it, Aristotle is built around a powerful, specialized search algorithm as its core engine. The system integrates three main components \citep{achim2025aristotleimolevelautomatedtheorem}:
+Aristotle's architecture is fundamentally different from the LLM-driven decomposition pipelines of the Tencent paper and Hilbert. Instead of relying on an LLM to recursively break down a problem until a simple "Prover" model can solve it, Aristotle is built around a powerful, specialized search algorithm as its core engine, the system integrates three main components \citep{achim2025aristotleimolevelautomatedtheorem}:
 \begin{enumerate}
-    \item \textbf{A Lean Proof Search Algorithm:} This is the system's "most fundamental component" \citep{achim2025aristotleimolevelautomatedtheorem}. It is not a simple LLM call but a \textbf{highly parallel Monte Carlo Graph Search (MCGS)} that uses a large transformer as its policy and value function \citep{achim2025aristotleimolevelautomatedtheorem}. This algorithm's job is to take a Lean proof sketch (with \texttt{sorry} statements) and find a complete proof by predicting Lean tactics conditional on the proof state and history \citep{achim2025aristotleimolevelautomatedtheorem}.
+    \item \textbf{A Lean Proof Search Algorithm:} This is the system's "most fundamental component". It is not a simple LLM call but a \textbf{highly parallel Monte Carlo Graph Search (MCGS)}. This algorithm's job is to take a Lean proof sketch (with \texttt{sorry} statements) and find a complete proof by predicting Lean tactics conditional on the proof state and history.
     
-    \item \textbf{A Lemma-based Informal Reasoning System:} This component functions as a high-level planner that boosts the performance of the MCGS \citep{achim2025aristotleimolevelautomatedtheorem}. As shown in Figure 2 of the paper, this system first generates an informal, natural language proof of the target theorem \citep{achim2025aristotleimolevelautomatedtheorem}. It then breaks this proof down into a sequence of lemmas, formalizes these lemmas into Lean, and uses feedback from the Lean REPL to correct errors \citep{achim2025aristotleimolevelautomatedtheorem}. These proven lemmas are then fed as context to the MCGS, effectively guiding its search.
+    \item \textbf{A Lemma-based Informal Reasoning System:} This component functions as a high-level planner that boosts the performance of the MCGS. As shown in Figure 2 of the paper, this system first generates an informal, natural language proof of the target theorem. It then breaks this proof down into a sequence of lemmas, formalizes these lemmas into Lean, and uses feedback from the Lean REPL to correct errors. These proven lemmas are then fed as context to the MCGS, effectively guiding its search.\citep{achim2025aristotleimolevelautomatedtheorem}
     
-    \item \textbf{A Dedicated Geometry Solver:} Recognizing the unique challenges of geometry, Aristotle uses a separate solver called \textbf{Yuclid} \citep{achim2025aristotleimolevelautomatedtheorem}. This is a highly-optimized C++ Deductive Database and Algebraic Reasoning (DD/AR) engine, which the authors claim is up to 500x faster than the one used in AlphaGeometry-1 \citep{achim2025aristotleimolevelautomatedtheorem}.
+    \item \textbf{A Dedicated Geometry Solver:} Recognizing the unique challenges of geometry, Aristotle uses a separate solver called \textbf{Yuclid}. This is a C++ Deductive Database and Algebraic Reasoning (DDAR) engine, which the authors claim is up to 500x faster than the one used in AlphaGeometry-1 \citep{achim2025aristotleimolevelautomatedtheorem}
 \end{enumerate}
 
-The core difference lies in Aristotle's workflow and its unique training methodology. While Hilbert uses recursion to break down a failed subgoal, Aristotle uses an iterative feedback loop between its informal and formal systems. If the MCGS fails to prove the main theorem using the first batch of generated lemmas, the system identifies which lemmas were proven and which remain unproven \citep{achim2025aristotleimolevelautomatedtheorem}. This formal feedback is passed back to the informal reasoning system, which is then prompted to \textit{revise} the proof strategy, either by fixing flawed lemmas or breaking them into more granular steps \citep{achim2025aristotleimolevelautomatedtheorem}.
+While Hilbert uses recursion to break down a failed subgoal, Aristotle uses an iterative feedback loop between its informal and formal systems. If the MCGS fails to prove the main theorem using the first pass of generated lemmas, the system identifies which lemmas were proven and which remain unproven \citep{achim2025aristotleimolevelautomatedtheorem}. This formal feedback is passed back to the informal reasoning system, which is then prompted to {revise} the proof strategy, either by fixing flawed lemmas or breaking them into more granular steps, in a manner quite similar to Hilbert \citep{achim2025aristotleimolevelautomatedtheorem}.
 
 Furthermore, Aristotle employs a novel technique called \textit{Test-Time Training} (TTT) \citep{achim2025aristotleimolevelautomatedtheorem}. If the system fails to solve a problem after its initial attempts, it does not just try a new prompt; it {retrains its model} on the search traces extracted from its own failed attempts \citep{achim2025aristotleimolevelautomatedtheorem}. This allows the model to learn from its specific failures at inference time, specializing itself to the difficult problem at hand and "accelerating the rate at which Aristotle processed lemmas" during the IMO evaluation \citep{achim2025aristotleimolevelautomatedtheorem}. This dynamic, self-improving search architecture stands in sharp contrast to the more static, prompt-driven decomposition of other systems.
 
+\subsection{AlphaProof}
+
+On November 12th, 2025, Google AI Labs released the paper \textit{Olympiad-level formal mathematical reasoning
+with reinforcement learning}, which introduced a new SOTA proving system on several benchmarks named \textit{AlphaProof}, such as Mini-F2F, raising performance from 99.4\% to 99.6\%. This paper incorporated several different incremental improvements from previous papers to achieve this result. \citet{Hubert2025Nature}
+
+Unlike systems that rely solely on LLM-driven decomposition, AlphaProof is an \textbf{AlphaZero-inspired agent} that learns to find formal proofs in the Lean theorem prover through large-scale reinforcement learning (RL). Its architecture combines a 3-billion parameter encoder-decoder transformer (the "proof network") with a powerful tree search algorithm. 
+
+A primary challenge for this approach is the need for a vast curriculum of problems. AlphaProof solves this by first using an auto-formalization process. This process employs a specialized Gemini-based LLM to translate approximately 1 million informal, natural-language problems into a massive dataset of around 80 million formal Lean problems. This 80-million-problem set serves as the curriculum for the main RL loop. In this phase, the agent learns by "self-generated experience" , attempting to prove or disprove millions of problems and using the verified outcomes as feedback to improve its network.
+
+This combined system was notably applied to the 2024 International Mathematical Olympiad (IMO) as an unseen competition. As part of a combined system with AlphaGeometry 2 (which solved the geometry problem), AlphaProof successfully solved three of the five non-geometry problems (P1, P2, and P6). This included solving P6, the "competition's most difficult problem" which only five human contestants solved. The combined system's score of 28 points achieved a performance equivalent to a silver medal, marking the "first time an AI system achieved any medal-level performance" at the IMO. \citep{Hubert2025Nature}
+
+
+Considering that this paper was released on Nov 13th, I do not understand it really yet. The full thesis will contain a better version of this section. 
 
 % Aristotle was developed as a commercial product, Developed by the AI lab Harmonic, and based on another foundation ATP system called \textit{SeedProver} \citet{chen2025seedproverdeepbroadreasoning}, 
 
@@ -365,108 +417,151 @@ Furthermore, Aristotle employs a novel technique called \textit{Test-Time Traini
 % One of the very odd features of this paper is Test-Time-Training, where if the model is unable to solve a problem, it is will learn from it's own experience at inference time. This is done by retraining the model on the search traces from all of the attempts. It is not clear what this does under the hood, they are being secretive intentionally here.
 
 % What is interesting, though, that they claim to have performed extremely well on new out-of-sample IMO problems, something that has not been done before. The runner up was GPT-5 high, with only 40\%. This section will urge the importance of this paper in that context, and that regardless of the trouble with benchmarks, there is real substantive work being done with these models, and they are very smart.
-\section{The trouble with Benchmarks}
+\section{Problems with Benchmarks in ATP}
 \label{sec:benchmarks}
 
-In this section I will explain what a benchmark is, when they are commonly deployed, how they are used, etc.
+Benchmarks are a commonly used way to gauge and compare the performance of different LLM systems. They are essentially tests of problems on a given topic, with various methods of determining whether an answer is correct or not. However, there exists a severe problem in the context of ATP, \textbf{Data Contamination}. Data Contamination arises when the problems themselves end up in the training sets of the models that are used in these systems. For example, let's say that in the corpus of Gemini 2.5 Pro were all of the pages of MathStackExchange indexed by Google. If any of these were to contain solutions to any problems on any of the Putnam exams, their solutions would end up in the weights and parameters of the model during its pre-training phase.
 
-\subsection{The benchmarks}
-This section will talk about MiniF2F, Putnam Bench, etc. 
+When this "contaminated" model is subsequently evaluated on that same Putnam exam, its performance is no longer a genuine measure of its reasoning or problem-solving abilities. Instead of deducing a solution, the model is, in effect, retrieving a memorized answer or a close statistical approximation of one it has already seen.
+
+This artificially inflates the model's benchmark scores, rendering the evaluation invalid. The test, which is designed to gauge generalization and novel deductive skill, inadvertently becomes a test of memorization. This is a critical flaw, as it provides a false signal of progress in the field and misleads researchers about the true capabilities of the LLM, especially in specialized domains like ATP where genuine, novel reasoning is the ultimate goal.
+
+\subsection{Benchmarks Commonly Used for ATP}
+The evaluation of automated mathematical reasoning systems, particularly those targeting formal proof generation, has converged on a set of standardized benchmarks. Among these, two benchmarks are the most important for claims of SOTA performance: \textit{MiniF2F} and \textit{PutnamBench}.
+
 \begin{enumerate}
-    \item \textbf{MiniF2F} is a collection of problem statements from olympiads, such as the AMC, AIME, and IMO. 
-    \item \textbf{Putnam Bench} is a benchmark that consists of all of the questions from the Putnam exam form 1962-2024. There are also formalizations provided, in lean, for every single problem. This is the current hardest benchmark, and a considerable level of effort is being dedicated to "maxing" it out.
+
+    \item \textbf{MiniF2F} Introduced by \citet{zheng2022minif2fcrosssystembenchmarkformal}, MiniF2F (standing for "formal-to-formal") is a widely adopted benchmark comprising 488 problem statements. These problems are sourced from various high-school level mathematics competitions, most notably the American Invitational Mathematics Examination (AIME), the International Mathematical Olympiad (IMO), and the American Mathematics Competitions (AMC). It has served as a primary standard for evaluating systems on creative, pre-university-level reasoning.
+    \item \textbf{PutnamBench}: PutnamBench was compiled due to the increasingly strong performance of systems on MiniF2F and related benchmarks. PutnamBench was introduced by \citet{tsoukalas2024putnambenchevaluatingneuraltheoremprovers}. It consists of 640 problems drawn from the William Lowell Putnam Mathematical Competition (1962-2024), the premier undergraduate-level mathematics competition in North America. Critically, PutnamBench provides complete source code/formalization for every problem in Lean 4. This inclusion of formal statements has made it the primary and most challenging benchmark for the formal ATP systems discussed in this thesis, such as Hilbert. Consequently, achieving high performance, or "saturating" this benchmark, has become a principal goal for top research labs.
 \end{enumerate}
-\subsection{Data Contamination in other fields}
-This will talk generally about the problem of data contamination in other fields, and their problems in benchmarks. It will talk about how the general problem of data contamination has tarnished the image of benchmarks more broadly, and how more approaches are needed. It will use \citep{choi2025how} for further evidence, and how benchmarks are sort of bad now.
-\subsection{The evidence in these systems}
-This will talk about specific evidence of this bias in mathematics competitions. It will use the matharena bechmarks and paper as evidence, as well as EEFSUVA paper. In this paper, they generated an entirely new, closed benchmark that was trained on problems from old soviet math olympiads. To preserve the perfomance of the benchmark, they did not open source it, but the problems are on par with those of the IMO/AIME and are a mix of undergrad and high-school level. The off the shelf models perform extremely poorly on this task, and it is the strongest evidence of data contamination. This section will also discuss \textit{matharena.ai}, which evaluates off the shelf models on new tests.
+\subsection{Data Contamination for all systems} \label{sec:contamination_general}
+
+The issue of data contamination extends far beyond the specialized domain of Automated Theorem Proving (ATP). It is a pervasive problem across the entire field of large language model (LLM) evaluation. When benchmark datasets, which are intended to be unseen test sets, are included in the massive pre-training corpus, the resulting performance metrics become unreliable. This overlap undermines the fundamental purpose of benchmarking, as it becomes impossible to distinguish between a model's genuine ability to generalize and its capacity for simple memorization \citep{choi2025how}.
+
+This problem has significantly tarnished many widely-used benchmarks, leading to exaggurated claims of model capability and misleading signals of progress in AI reasoning. Consequently, a critical area of research has emerged, focused not just on creating new, "clean" benchmarks, but on developing robust methods to detect contamination in existing ones.
+
+\subsection{Data Contamination in ATP}
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+Model & HHMT & SMT & BRUMO & IMO &USMO & EEFSUVA \\
+\midrule
+Gemini 2.5 Pro      & 82.50\% & 84.91\%  & 90.00\% & 31.55\% &24.40\% &0\% \\
+GPT-5 Thinking/High & 88.33\%  & 91.98\% & 91.67\% & 38.10\% &n/a & 35.89\%  \\
+\bottomrule
+\end{tabular}
+\caption{EEFSUVA compared to other benchmarks. \citet{khatibi2025eefsuvanewmathematicalolympiad}}
+\end{table}
+\label{sec:atpbenchmarks}
+There are strong and justified concerns about the pervasiveness of Data Contamination in the field of ATP. In 2025, a website launced called \href{https://matharena.ai}{matharena.ai}, which tracks the performance of Off-The-Shelf LLMs on new problems published from math competitions that came out after their training cutoffs. This website was published in conjunction with other reasearch done in \citet{balunovic2025matharena}. The authors found a clear observed drop-off in perfomance on problems from exams authored after the training cutoff of these models, illustrating clear evidence of Data Contamination. 
+
+In a very interesting study, researchers found a workaround to the problems faced by public benchmarks, they constructed an entirely new benchmark on old soviet and eastern european national math olympiads, which had several important key characteristics. \citet{khatibi2025eefsuvanewmathematicalolympiad}
+\begin{enumerate}
+    \item The contents of these exams had never been put on the internet, and therefore it would be impossible for them to be in the training corpus for these Off-The-Shelf models.
+    \item The benchmark is curated from under-circulated regional and national Olympiads of Eastern Europe and the countries from the former Soviet Union. 
+    \item The problems feature a comparable difficulty to the International Mathematics Olympiad (IMO).
+    \item They are renowned for demanding nonstandard problem-solving techniques.
+\end{enumerate}
+
+As a result of all the features above, good performance on this benchmark would be a very good signal for these models, and for these systems as a whole. Unfortunately, this is not what the authors observed. The authors observed that even state-of-the-art LLMs exhibit a notable performance decline on the EEFSUVA benchmark relative to other Olympiad-style benchmarks. \citep{khatibi2025eefsuvanewmathematicalolympiad} You can see this in Table 1.
+
+
+% This will talk about specific evidence of this bias in mathematics competitions. It will use the matharena bechmarks and paper as evidence, as well as EEFSUVA paper. In this paper, they generated an entirely new, closed benchmark that was trained on problems from old soviet math olympiads. To preserve the perfomance of the benchmark, they did not open source it, but the problems are on par with those of the IMO/AIME and are a mix of undergrad and high-school level. The off the shelf models perform extremely poorly on this task, and it is the strongest evidence of data contamination. This section will also discuss \textit{matharena.ai}, which evaluates off the shelf models on new tests.
 \subsection{Reproducibility Concerns more broadly}
-You may notice that in this proposal I mention the LLM-Systems that should be outperforming everything, but they remain untested in the above scenarios for contamination. Why? Because we have not replicated their results yet. The only system with published source code is Apple's, and building the system would be both costly in terms of hours spent coding, as well as inference time for models. As a result, we don't know how bad the problem is.
+You may notice that there were no results in \autoref{sec:atpbenchmarks} for the proving systems mentioned in \autoref{sec:proofsystems} for the MathArena paper specifically. This is due to a shocking lack of replication in the field of ATP. To reproduce one of these systems from \autoref{sec:proofsystems} would be an expensive undertaking, both in terms of time required to recreate such a system, and also in the price of API calls. Thus, there is little incentive for third-party labs to recreate the systems used for a fair evaluation. This is not to mention that for many of the systems, for example, Aristotle, the source code and exact methodology is proprietary, and therefore it would be impossible for a third party to reproduce these results. As a result, there are many unanswered questions about the exact validity of these purported results. It seems highly unlikely that these claims are entirely falsified, but they have not been verified by any third parties whatsoever.
+
+% I mention the LLM-Systems that should be outperforming everything, but they remain untested in the above scenarios for contamination. Why? Because we have not replicated their results yet. The only system with published source code is Apple's, and building the system would be both costly in terms of hours spent coding, as well as inference time for models. As a result, we don't know how bad the problem is.
 \section{Future directions}
 \label{sec:futures}
-\subsection{System-Agnostic techniques to improve performance}
-This section is essentially about giving the models a stronger "engine" to work with. The techniques in here apply to basically any learning task, at a cost. This cost is either in inference or training, but they all essentially involve messing with hyperparameters. Here are some of the dials worth changing to see what results come:
+
+The preceding sections highlighted numerous unanswered questions regarding the performance of ATP systems. This section proposes future research directions and identifies key open questions in the field.
+
+\subsection{Documenting Scalability in System-Agnostic Techniques}
+
+
+Addressing the open questions surrounding ATP performance requires new approaches. This subsection focuses on one promising research direction: system-agnostic techniques that can be applied broadly to enhance performance irrespective of the specific model or system being used. It might be interesting to re-examine Hilbert \citep{varambally2025hilbertrecursivelybuildingformal} or the Tencent Paper \citep{zhou2025solvingformalmathproblems} by adjusting many of the hyperparameters that apply to these systems, and documenting how changing them affects performance. Here a few possible directions for this research:
 \begin{enumerate}
-    \item Running many different instances or trials at the same time
-    \item Trying different combinations of models/models at the same time
-    \item Hiring data labellers to make solutions for examples that the models fail on
+    \item Determining the importance of the \textbf{N} parameter for Pass@N, is there ever a level off in performance when increasing the number of trials? It would be interesting to see how performance levels off, and try to model this as an equation with some sort of scaling law. However, as the number of trials grows arbitrarily large, you would expect accuracy to reach 100\%, as a correlary of the \textit{Infinite Monkey Theorem}, where in this case, the Monkey is the LLM. (see \citet{brown2024largelanguagemonkeysscaling})
+    \item Determining which model is the best \textit{Prover} and which is the best \textit{Reasoner}, and which is the best \textit{Verifier}. This would be comparitively easy to test, since there are only about 4-5 models that would be considered competitive for each category.
+    \item Making a specialized dataset of human-generated solutions for difficult examples that models fail to solve, enabling a more targeted analysis of model weaknesses.
 \end{enumerate}
+\subsection{Reproducing Papers and Comparing Results}
+
+Even though Aristotle is closed source, it is accesible through a paid API platform. It would be very interesting therefore to test it and the other models on the input Lean 4 formalizations for all of the questions on PutnamBench, and then see what sort of results each system was able to achieve. This would be rather expensive, since Aristotle is a closed source proprietary model, but it would definitely be feasible to test a smaller benchmark to compare performance. This could then be made into a website as well, that shows the results of these models and determines which is the best using an elo ranking system, similar to \textit{MathArena}.
+
 \subsection{Implementing papers that propose better benchmarking}
-This would just be to implement the amazon paper, which proposes to dynamically generate problems to use as a benchmark as opposed to using fixed domain specific ones. This might be something like working backwards from a space and deleting connections and asking a model to fill them in, I need to read this paper more to understand how it works, frankly.
-\subsection{Elo rating for proving}
-Create a platform that lets companies submit their systems. Then, use the above technique to battle all of the systems against one another, use LLM as a judge to determine if one proof was somehow better, or if both were the same. This would be what I would do as well if I was doing a 2 semester thesis.
-\subsection{Reproducing the apple paper}
+The BEYONDBENCH framework \citet{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} offers a solution to data contamination by proposing an evaluation method based on algorithmic problem generation. Instead of using a fixed set of questions, this approach dynamically creates new, mathematically-grounded problems on the fly, ensuring that test instances remain fresh and uncontaminated.
 
-This would also be a good topic for a 2 semester thesis. This would go in depth on estimating the costs and feasibility of implementing this paper in a state that is usable for researchers. Something like a more accesible version of what Aristotles API offers.
+The framework spans a wide range of tasks, from basic arithmetic to NP-complete problems, with each task category capable of generating a vast number of unique instances (e.g., $> 10^{15}$). Solutions are verified deterministically, providing a robust measure of a model's genuine reasoning capabilities rather than its recall. A future research direction would be to implement a similar algorithmic generation framework, specifically for ATP. This would allow for a rigorous, contamination-resistant evaluation of systems, testing their performance as problem complexity scales and providing a clearer signal of their true problem-solving abilities. Also, it would allow for data-augmentation for training.
+
 \medskip
 
-
-\textbf{THIS IS THE END OF MY ROUGH DRAFT}
 \newpage
-\section{Old proposal}
+% \section{Old proposal}
 
-\space The past few years have seen remarkable growth in the power and usage of Large Language Models (\textit{LLMs}), which have led to their implementation in a variety of different fields. One such field is mathematical competitions, where systems of models have allegedly begun to perform at a level that is on-par with the most advanced humans. For example, see the performance of the Google DeepMind IMO Geometry solver \citep{chervonyi2025goldmedalistperformancesolvingolympiad}, or the myriad of systems that claim to solve almost all of the AIME/IMO problems thrown at them (\cite{varambally2025hilbertrecursivelybuildingformal}, \cite{ren2025deepseekproverv2advancingformalmathematical}). If these models were to participate in the past year's IMO competition they would have eclipsed all human results.
+% \space The past few years have seen remarkable growth in the power and usage of Large Language Models (\textit{LLMs}), which have led to their implementation in a variety of different fields. One such field is mathematical competitions, where systems of models have allegedly begun to perform at a level that is on-par with the most advanced humans. For example, see the performance of the Google DeepMind IMO Geometry solver \citep{chervonyi2025goldmedalistperformancesolvingolympiad}, or the myriad of systems that claim to solve almost all of the AIME/IMO problems thrown at them (\cite{varambally2025hilbertrecursivelybuildingformal}, \cite{ren2025deepseekproverv2advancingformalmathematical}). If these models were to participate in the past year's IMO competition they would have eclipsed all human results.
 
-\medskip
+% \medskip
 
-This is troubling for many mathematicians, students, and thinkers alike, who are deeply concerned with the profound implications of non-living machines being better at the complex reasoning required for proofs than their human counterparts. \textit{Are we becoming obsolete?} The fundamental aim of this thesis would be to decipher the "progress" made by these approaches, the reliability of benchmarks for evaluating performance, and provide a full overview of the existing body of research.
+% This is troubling for many mathematicians, students, and thinkers alike, who are deeply concerned with the profound implications of non-living machines being better at the complex reasoning required for proofs than their human counterparts. \textit{Are we becoming obsolete?} The fundamental aim of this thesis would be to decipher the "progress" made by these approaches, the reliability of benchmarks for evaluating performance, and provide a full overview of the existing body of research.
 
-\medskip
+% \medskip
 
-\textit{How should we taxonomize these systems?} In 2025, many different models and systems claimed to score extremely well on benchmarks from leading prestigious math exams (see everything I cited in 3.1). However, there does not exist a clear organizational structure or taxonomy of these systems. One of the aims of this thesis would be to clarify the specific types of solutions that have been built. Once approach would be to disambiguate between standalone fine-tuned LLM models and larger systems, and to separate geometric search based solutions from the rest. This separation would hopefully lead a clear chronologically progression from paper to paper charting the advancement of the techniques and models that have yielded the outstanding results that ultimately culminated in the HILBERT paper just a few weeks ago \citep{varambally2025hilbertrecursivelybuildingformal}, where engineers were able to solve and formalize using Lean 4 70\% of problems on PutnamBench \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers}.
+% \textit{How should we taxonomize these systems?} In 2025, many different models and systems claimed to score extremely well on benchmarks from leading prestigious math exams (see everything I cited in 3.1). However, there does not exist a clear organizational structure or taxonomy of these systems. One of the aims of this thesis would be to clarify the specific types of solutions that have been built. Once approach would be to disambiguate between standalone fine-tuned LLM models and larger systems, and to separate geometric search based solutions from the rest. This separation would hopefully lead a clear chronologically progression from paper to paper charting the advancement of the techniques and models that have yielded the outstanding results that ultimately culminated in the Hilbert paper just a few weeks ago \citep{varambally2025hilbertrecursivelybuildingformal}, where engineers were able to solve and formalize using Lean 4 70\% of problems on PutnamBench \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers}.
 
-\medskip
+% \medskip
 
-\textit{And how can we trust the blockbuster results of this research?} 
-\citet{khatibi2025eefsuvanewmathematicalolympiad} provides clear evidence of "data contamination", or that the models fail on problems that do not widely exist on the internet, and are therefore out of distribution. They test this by creating a benchmark consisting of questions sourced from the national math olympiads of Eastern Europe. Despite being at the same level of difficulty as their western counterparts, LLMs perform poorly on these questions, raising concerns. \citet{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} provides an approach that could be used to test this hypothesis. As this is only a one semester thesis, this will be a proposed future direction for exploration, one which I would seriously consider endeavoring into later in my academic career.
-\medskip
+% \textit{And how can we trust the blockbuster results of this research?} 
+% \citet{khatibi2025eefsuvanewmathematicalolympiad} provides clear evidence of "data contamination", or that the models fail on problems that do not widely exist on the internet, and are therefore out of distribution. They test this by creating a benchmark consisting of questions sourced from the national math olympiads of Eastern Europe. Despite being at the same level of difficulty as their western counterparts, LLMs perform poorly on these questions, raising concerns. \citet{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} provides an approach that could be used to test this hypothesis. As this is only a one semester thesis, this will be a proposed future direction for exploration, one which I would seriously consider endeavoring into later in my academic career.
+% \medskip
 
-In conclusion, this thesis will serve as a \textit{review} of the field of AI proving, urging more caution in the interpretation of these results, as well as explaining how we arrived where we are now.
-
-
+% In conclusion, this thesis will serve as a \textit{review} of the field of AI proving, urging more caution in the interpretation of these results, as well as explaining how we arrived where we are now.
 
 
 
-\section{Old Reading List \& Annotated Bibiliography}
-\subsection{General Proving Systems}
-\begin{enumerate}
+
+
+% \section{Old Reading List \& Annotated Bibiliography}
+% \subsection{General Proving Systems}
+% \begin{enumerate}
     
-\item \citep{varambally2025hilbertrecursivelybuildingformal} is a paper published by Apple Labs in September 2025. It is the current SOTA method for solving Putnam problems, and runner up to \citet{chen2025seedproverdeepbroadreasoning} for AIME level problems.
+% \item \citep{varambally2025hilbertrecursivelybuildingformal} is a paper published by Apple Labs in September 2025. It is the current SOTA method for solving Putnam problems, and runner up to \citet{chen2025seedproverdeepbroadreasoning} for AIME level problems.
 
-\item \citep{chen2025seedproverdeepbroadreasoning} A closed source model that outperforms \citet{liang2025solvingchallengingimoproblems}. It is close lipped about it's approach, but uses an approach similar to \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} combined with a separate prover for MiniF2F non-geometric problems called \textit{SeedProver}.
+% \item \citep{chen2025seedproverdeepbroadreasoning} A closed source model that outperforms \citet{liang2025solvingchallengingimoproblems}. It is close lipped about it's approach, but uses an approach similar to \textit{AlphaGeometry} \citep{chervonyi2025goldmedalistperformancesolvingolympiad} combined with a separate prover for MiniF2F non-geometric problems called \textit{SeedProver}.
 
-\item \citep{liang2025solvingchallengingimoproblems} produces a system that serves as a direct precursor to \citet{varambally2025hilbertrecursivelybuildingformal}. It uses an iterative framework instead of a recursive one.
+% \item \citep{liang2025solvingchallengingimoproblems} produces a system that serves as a direct precursor to \citet{varambally2025hilbertrecursivelybuildingformal}. It uses an iterative framework instead of a recursive one.
 
-\item  \citep{chervonyi2025goldmedalistperformancesolvingolympiad} Published by DeepMind after they achieved gold medal performance on geometric problems from the IMO. They combine LLM based techniques, brute force search of new facts, and a predefined set of lemmas to solve geometric problems. 
+% \item  \citep{chervonyi2025goldmedalistperformancesolvingolympiad} Published by DeepMind after they achieved gold medal performance on geometric problems from the IMO. They combine LLM based techniques, brute force search of new facts, and a predefined set of lemmas to solve geometric problems. 
 
-\end{enumerate}
-\subsection{Fine-Tuned Proving Models}
-\begin{enumerate}
-    \item \citep{tian2025evolproveradvancingautomatedtheorem} claims to outperform \citet{ren2025deepseekproverv2advancingformalmathematical} but it is a preprint. 
-    \item \citep{ren2025deepseekproverv2advancingformalmathematical} provides a SOTA 7B parameter LLM model to solve short proofs.
-\end{enumerate}
+% \end{enumerate}
+% \subsection{Fine-Tuned Proving Models}
+% \begin{enumerate}
+%     \item \citep{tian2025evolproveradvancingautomatedtheorem} claims to outperform \citet{ren2025deepseekproverv2advancingformalmathematical} but it is a preprint. 
+%     \item \citep{ren2025deepseekproverv2advancingformalmathematical} provides a SOTA 7B parameter LLM model to solve short proofs.
+% \end{enumerate}
 
 
-\subsection{Benchmarks}
+% \subsection{Benchmarks}
 
-How do they generate the Putnam questions?
+% How do they generate the Putnam questions?
 
-\begin{enumerate}
-    \item \textit{MiniF2F}: \space \citep{zheng2022minif2fcrosssystembenchmarkformal} a benchmark of 488 problems drawn from AIME, IMO \& AMC competitions. Considered the gold-standard benchmark for high-school level olympiad math. 
-    \item \textit{PutnamBench}: \space \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers} a benchmark that provides 640 putnam problems and solutions from competitons from the William Lowell Putnam Mathematical Competition, the premier undergraduate-level mathematics competition in North America. All problems have formalizations in Lean 4 and Isabelle. All the hype recently has been around this benchmark.
-\end{enumerate}
+% \begin{enumerate}
+%     \item \textit{MiniF2F}: \space \citep{zheng2022minif2fcrosssystembenchmarkformal} a benchmark of 488 problems drawn from AIME, IMO \& AMC competitions. Considered the gold-standard benchmark for high-school level olympiad math. 
+%     \item \textit{PutnamBench}: \space \citep{tsoukalas2024putnambenchevaluatingneuraltheoremprovers} a benchmark that provides 640 putnam problems and solutions from competitons from the William Lowell Putnam Mathematical Competition, the premier undergraduate-level mathematics competition in North America. All problems have formalizations in Lean 4 and Isabelle. All the hype recently has been around this benchmark.
+% \end{enumerate}
 
-\subsection{Useful Supporting Research}
+% \subsection{Useful Supporting Research}
 
-\begin{enumerate}
-    \item \citep{petrov2025proofbluffevaluatingllms}, argues that current off-the-shelf LLMs are insufficient for solving proofs on their own, and that significant fine-tuning and reorganization is required to get better performance. Identified that LLMs have similar failure modes in formal proving. LLMs tend to claim that they solved problems, while having skipped crucial steps for validation and do not have required creativity for solving. 
+% \begin{enumerate}
+%     \item \citep{petrov2025proofbluffevaluatingllms}, argues that current off-the-shelf LLMs are insufficient for solving proofs on their own, and that significant fine-tuning and reorganization is required to get better performance. Identified that LLMs have similar failure modes in formal proving. LLMs tend to claim that they solved problems, while having skipped crucial steps for validation and do not have required creativity for solving. 
     
-    \item \citep{guo2025rightenoughpitfallsoutcome}, addressed many of the flaws in using stock off-the-shelf LLMs to judge the correctness of the proof. They propose their own solution that is significantly better for validation.
+%     \item \citep{guo2025rightenoughpitfallsoutcome}, addressed many of the flaws in using stock off-the-shelf LLMs to judge the correctness of the proof. They propose their own solution that is significantly better for validation.
 
-    \item \citep{khatibi2025eefsuvanewmathematicalolympiad} supports the claim that there is what is referred to as "data contamination" in existing benchmarks. Many of the problems that appear on these benchmarks have solutions that end up in the training data for models (intentionally or unintentionally) making them generally inadmissable. Paper comes up with a new benchmark to rectify this and shows clear evidence that these LLMs cannot generalize to problems out-of-distribution.
+%     \item \citep{khatibi2025eefsuvanewmathematicalolympiad} supports the claim that there is what is referred to as "data contamination" in existing benchmarks. Many of the problems that appear on these benchmarks have solutions that end up in the training data for models (intentionally or unintentionally) making them generally inadmissable. Paper comes up with a new benchmark to rectify this and shows clear evidence that these LLMs cannot generalize to problems out-of-distribution.
 
-    \item  \citep{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} argues that benchmarks are universally subject to bias and that algorithmically generated sample questions are the only way to go from here. It provides an approach that could be applied to see if these LLMs have this issue.
-\end{enumerate}
+%     \item  \citep{srivastava2025beyondbenchbenchmarkfreeevaluationreasoning} argues that benchmarks are universally subject to bias and that algorithmically generated sample questions are the only way to go from here. It provides an approach that could be applied to see if these LLMs have this issue.
+% \end{enumerate}
 \bibliographystyle{plainnat}
 \bibliography{bibliography} % Specifies the .bib file (references.bib)
 \end{document}
