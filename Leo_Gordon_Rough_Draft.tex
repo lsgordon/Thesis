@@ -61,10 +61,10 @@
 }
 
 % --- End of Preamble ---
-\title{Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics (Full Draft)}
+\title{Automated Theorem Proving: Language Model Based Approaches to Tackle Undergraduate \& High School Competitions in Mathematics (Full Draft)}
 \author{Leo Gordon \\  Haverford College }
 % Under the supervision of Steven Lindell
-\date{November 21st 2025\\ Under the Supervision of Prof. Steven Lindell }
+\date{November 15th 2025\\ Under the Supervision of Prof. Steven Lindell }
 
 \begin{document}
 
@@ -219,6 +219,7 @@ AlphaGeometry2 (AG2) is a system that surpassed the performance of an average IM
 The core of AG2 is its symbolic engine, \textbf{DDAR} (Deductive Database Arithmetic Reasoning), which is responsible for computing the "deduction closure"---the set of all provable facts given the problem's starting conditions. The original AG1 used DDAR1, which was slow; for instance, its search for similar triangles had a time complexity of $O(N^8)$. DDAR2, the new engine in AG2, is a "stronger and faster symbolic engine" due to several upgrades. Algorithmically, it uses more efficient methods like hashing to find similar triangles and cyclic quadrilaterals. Physically, the engine's core was rewritten in C++ and exposed to Python via pybind11, resulting in a speedup of over 300x in benchmark tests (from $\approx$1180 seconds to $\approx$3.4 seconds). Critically, DDAR2 also added the ability to handle "double points," a technique that allows the system to prove that two points with different definitions (e.g., $X$ as the intersection of lines $a, b$ and $X'$ as the intersection of line $a$ and circle $w$) are, in fact, the same point. This enables powerful proof by reformulation.
     AG1 used a simple beam search to find proofs. AG2 introduces a far more robust algorithm called \textbf{Shared Knowledge Ensemble of Search Trees (SKEST)}. In this system, multiple, differently-configured search trees (e.g., one that adds one auxiliary point at a time, one that adds multiple) are executed in parallel, often using different LLMs. \citep{chervonyi2025goldmedalistperformancesolvingolympiad}
 \subsubsection{Seed-Geometry}
+\label{sec:seedgeo}
 Similar to AlphaGeometry, Seed-Geometry \citep{chen2025seedproverdeepbroadreasoning} is a \textbf{neuro-symbolic system} designed to solve complex geometry problems. It was developed as a component of the larger \textbf{Seed-Prover} system, which is a "lemma-style whole-proof reasoning model" designed to work with the formal language Lean. The authors of Seed-Prover noted a "lack of sufficient geometry support in Lean" and therefore built Seed-Geometry as a "dedicated geometry reasoning engine" to handle this domain. Like AG2, Seed-Geometry is a neuro-symbolic system that follows a forward-chaining design . It pairs a high-performing LLM from the "Seed family" with a "specialized reasoning engine". As a proprietary system, we don't know many of the exact details.
 A core theme shared with AG2 is the emphasis on speed and data. The Seed-Geometry engine was also rewritten in C++ (from a Python implementation in its predecessor, TongGeometry) for a 100-fold speed increase. This speed was necessary to power its "extensive search" data generation pipeline, which created a massive repository of over \textbf{230 million unique geometry problems}. This vast synthetic dataset was then used to train the Seed LLM policy model, granting it the expert intuition needed to guide the symbolic prover.
 
@@ -308,8 +309,18 @@ Thus the output of this \textit{Reasoner} will be a list of unproven statements,
 
 % This section will also cover the the Tencent AI paper where they didn't use recursive subcomposition, and instead did a linear approach, one pass of subgoal decomposition, and importantly, the reason why we use don't use the fine-tuned 7b models for every step of this proving process, instead only using them for small lemmas in the process.
 
-\subsection{SeedProver}
-TODO Write this section
+\subsubsection{Seed-Prover}
+On August 1st, ByteDance AI labs released the paper, \textit{Seed-Prover: Deep and Broad Reasoning for
+Automated Theorem Proving} \citet{chen2025seedproverdeepbroadreasoning}. It is important to note that the source code for this paper, as well as any system prompts, or low-level implementation details have not been published online, or verified by a third party. This paper achieved at the time SOTA performance on the \textit{PutnamBench} benchmark, with performance of about 50\% \citet{chen2025seedproverdeepbroadreasoning}. This system was the most complicated ATP system ever at the time of it's release, and it's release shepherded in a few very important advancements for the field as a whole. 
+\begin{enumerate}
+    \item \textbf{The ensembling of geometric and text-based subsystems:} 
+    \textit{Seed-Prover} consists of two critical subcomponents, \textit{Seed-Prover} and \textit{Seed-Geometry}. It is not specified what the mechanism is for the assignment of problems from one subsystem over another, but this specialization of proving type provides clear benefits in performance over previous techniques. For a deeper explanation of Seed-Geometry, refer to \autoref{sec:seedgeo}. \citet{chen2025seedproverdeepbroadreasoning}
+    \item \textbf{Conjecture Proposing as opposed to Draft, Sketch, Prove}
+    Instead of following a pre-defined informal proof, as seen in "Draft, Sketch, Prove" (DSP) methods \citet{jiang2023draftsketchproveguiding}, \textit{Seed-Prover} introduces a dynamic "conjecture proposing" mechanism. This system actively generates and evaluates intermediate lemmas and conjectures during the proof search. This allows the prover to explore more diverse proof paths and discover novel intermediate steps that may not be present in a human-written draft, enabling it to solve problems without existing informal solutions. \citet{chen2025seedproverdeepbroadreasoning}
+
+    \item \textbf{Test time scaling}
+    \textit{Seed-Prover} leverages significant computational resources at inference time to enhance performance. This includes techniques such as generating a large number of potential proof attempts (self-consistency) and employing sophisticated search algorithms (like MCTS) guided by the model's heuristics. By scaling the search budget and sampling diversity at test time, the system can systematically explore a much larger proof space than a single, greedy decoding pass, significantly increasing its problem-solving success rate. \citet{chen2025seedproverdeepbroadreasoning}
+\end{enumerate}
 
 \subsubsection{Hilbert}
 \label{sec:hilbert}
@@ -396,7 +407,22 @@ While Hilbert uses recursion to break down a failed subgoal, Aristotle uses an i
 
 Furthermore, Aristotle employs a novel technique called \textit{Test-Time Training} (TTT) \citep{achim2025aristotleimolevelautomatedtheorem}. If the system fails to solve a problem after its initial attempts, it does not just try a new prompt; it {retrains its model} on the search traces extracted from its own failed attempts \citep{achim2025aristotleimolevelautomatedtheorem}. This allows the model to learn from its specific failures at inference time, specializing itself to the difficult problem at hand and "accelerating the rate at which Aristotle processed lemmas" during the IMO evaluation \citep{achim2025aristotleimolevelautomatedtheorem}. This dynamic, self-improving search architecture stands in sharp contrast to the more static, prompt-driven decomposition of other systems.
 
-\subsection{AlphaProof}
+\subsubsection{Ax-Prover}
+
+Released in November 2025, \textbf{Ax-Prover} presents a different architectural philosophy, positioning itself as a "lightweight agentic workflow" designed to counteract the limitations of heavyweight, specialized provers \citep{breen2025axproverdeepreasoningagentic}. The authors argue that while specialized models like DeepSeek-Prover achieve high performance on specific benchmarks, they suffer from three key limitations: (1) they fail to generalize to new scientific domains beyond their training data \citep{breen2025axproverdeepreasoningagentic}; (2) they are "brittle" to changes in the fast-evolving Mathlib library, requiring constant, expensive retraining \citep{breen2025axproverdeepreasoningagentic}; and (3) they are "burdensome" to deploy, often requiring high-performance-computing clusters (e.g., 8x H200 GPUs for DS-Prover) that are inaccessible to most researchers \citep{breen2025axproverdeepreasoningagentic}.
+
+Ax-Prover's solution is to "sidestep" specialized models entirely. It does not use any domain-specific training. Instead, it uses a multi-agent system of general-purpose LLMs (e.g., Claude Sonnet 4.5) equipped with a suite of "Lean tools" via the Model Context Protocol (MCP). The architecture consists of three agents:
+\begin{enumerate}
+    \item \textbf{The Orchestrator:} A scheduler that assigns tasks and routes feedback.\citep{breen2025axproverdeepreasoningagentic}
+    \item \textbf{The Prover:} The "constructive core" of the system. It emulates a human workflow: it first analyzes an unproven theorem (marked with \texttt{sorry}) and generates a high-level, natural language "proof sketch". It then formalizes this sketch into a sequence of \texttt{have ... by sorry} statements, effectively breaking the problem into manageable steps. Crucially, it then solves each step sequentially, using its tools in a "tight feedback loop". It uses \texttt{lean\_leansearch} to find relevant lemmas in Mathlib, \texttt{lean\_goal} to inspect the proof state, and \texttt{lean\_diagnostic\_messages} to verify its own work before moving on \citep{breen2025axproverdeepreasoningagentic}.
+    \item \textbf{The Verifier:} A final "gatekeeper" that performs a last check to ensure the final proof is complete and contains no errors or \texttt{sorry} placeholders \citep{breen2025axproverdeepreasoningagentic}.
+\end{enumerate}
+
+To prove their "generalizability" argument, the authors introduced two new benchmarks: \textbf{AbstractAlgebra} (research-level problems) and \textbf{Quantum Theorems} (physics problems). On these, Ax-Prover significantly outperformed the specialized provers. On AbstractAlgebra, it scored 64\% to DS-Prover's 24\%, and on Quantum Theorems, it achieved 96\% to DS-Prover's 61\%. The paper notes this is because the Quantum dataset used "custom definitions" not found in Mathlib; the specialized provers, over-specialized on Mathlib, failed, whereas Ax-Prover's general-purpose LLM could "flexibly incorporate" the new concepts \citep{breen2025axproverdeepreasoningagentic}.
+
+On PutnamBench, Ax-Prover's result of 14\% accuracy (92 problems) appears low compared to Hilbert's 70\%. However, the authors highlight this 14\% was achieved with a "much leaner compute budget" and using \texttt{pass@1} (defined as a single, multi-step agentic run), whereas systems like Hilbert used an `avg. pass@1840` and DeepSeek-Prover used `pass@1024`. Ax-Prover thus presents itself as a more accessible and generalizable alternative, designed to be a "researcher-friendly assistant" rather than a heavyweight autonomous system \citep{breen2025axproverdeepreasoningagentic}.
+
+\subsubsection{AlphaProof}
 
 On November 12th, 2025, Google AI Labs released the paper \textit{Olympiad-level formal mathematical reasoning
 with reinforcement learning}, which introduced a new SOTA proving system on several benchmarks named \textit{AlphaProof}, such as Mini-F2F, raising performance from 99.4\% to 99.6\%. This paper incorporated several different incremental improvements from previous papers to achieve this result. \citet{Hubert2025Nature}
@@ -406,9 +432,7 @@ Unlike systems that rely solely on LLM-driven decomposition, AlphaProof is an \t
 A primary challenge for this approach is the need for a vast curriculum of problems. AlphaProof solves this by first using an auto-formalization process. This process employs a specialized Gemini-based LLM to translate approximately 1 million informal, natural-language problems into a massive dataset of around 80 million formal Lean problems. This 80-million-problem set serves as the curriculum for the main RL loop. In this phase, the agent learns by "self-generated experience" , attempting to prove or disprove millions of problems and using the verified outcomes as feedback to improve its network.
 
 This combined system was notably applied to the 2024 International Mathematical Olympiad (IMO) as an unseen competition. As part of a combined system with AlphaGeometry 2 (which solved the geometry problem), AlphaProof successfully solved three of the five non-geometry problems (P1, P2, and P6). This included solving P6, the "competition's most difficult problem" which only five human contestants solved. The combined system's score of 28 points achieved a performance equivalent to a silver medal, marking the "first time an AI system achieved any medal-level performance" at the IMO. \citep{Hubert2025Nature}
-
-
-Considering that this paper was released on Nov 13th, I do not understand it really yet. The full thesis will contain a better version of this section. 
+This paper was released on Nov 13th. The full thesis/next draft will contain a more refined version of this section. 
 
 % Aristotle was developed as a commercial product, Developed by the AI lab Harmonic, and based on another foundation ATP system called \textit{SeedProver} \citet{chen2025seedproverdeepbroadreasoning}, 
 
